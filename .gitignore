@@ -1,0 +1,28 @@
+# Large data files (on D drive or local)
+data/processed/*.parquet
+data/processed/cache/
+data/raw/**/*.csv
+data/raw/**/*.xlsx
+data/raw/**/*.parquet
+
+# Checkpoints (large binary files)
+checkpoints/*.pt
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.env
+.venv/
+
+# IDE
+.vscode/
+.idea/
+
+# Temp files
+*.tmp
+_*.py
+D:/financial_data/
+
+# Logs
+logs/
