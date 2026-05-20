@@ -1,6 +1,6 @@
 # Large data files (on D drive or local)
 data/processed/*.parquet
-data/processed/cache/
+data/processed/cache/*.pt
 data/raw/**/*.csv
 data/raw/**/*.xlsx
 data/raw/**/*.parquet
