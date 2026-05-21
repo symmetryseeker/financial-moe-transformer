@@ -296,8 +296,8 @@ class SlidingWindowDataset(Dataset):
         return sample
 
     def train_val_test_split(self,
-                             train_frac: float = 0.7,
-                             val_frac: float = 0.15,
+                             train_frac: float = 0.85,
+                             val_frac: float = 0.05,
                              n_folds: int = 5,
                              fold: int = -1) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """

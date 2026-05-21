@@ -100,9 +100,9 @@ TOKEN_MASK_PROB = 0.05
 N_CV_FOLDS = 5                     # number of time-series folds
 
 # Train/val/test splits (for simple split mode)
-TRAIN_FRAC = 0.6
-VAL_FRAC = 0.25                   # 0.15→0.25: more stable IC estimate
-TEST_FRAC = 0.15
+TRAIN_FRAC = 0.85                  # 0.6→0.85: more training data to fight overfitting
+VAL_FRAC = 0.05                   # 0.25→0.05: 130 windows sufficient for early stop
+TEST_FRAC = 0.10
 
 REQUIRED_COLS = ["datetime", "source", "variable", "value"]
 
