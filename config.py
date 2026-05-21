@@ -29,7 +29,7 @@ DATA_EXTERNAL.mkdir(parents=True, exist_ok=True)
 # ─── Hardware ──────────────────────────────────────────────────────────────────
 # GTX 1060 6GB: FP16 throughput is 1/64 of FP32 ― use FP32.
 # Update NVIDIA driver to >=525 to get CUDA 11.8+ for PyTorch 2.1+.
-DEVICE = "cuda"  # fallback to "cpu" if torch.cuda.is_available() is False
+DEVICE = "cuda" if __import__("torch").cuda.is_available() else "cpu"
 USE_AMP = False  # no mixed-precision: GP106 has no tensor cores
 
 # ─── Model Architecture ────────────────────────────────────────────────────────
