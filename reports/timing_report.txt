@@ -1,0 +1,22 @@
+=================================================================
+  PHASE 1: INDEX MARKET TIMING BACKTEST
+=================================================================
+  Model: checkpoints/best_phase2_cont.pt (Val IC=0.0528)
+  Period: 2024-11-28 -> 2025-09-26 (205 days)
+  Test IC (63d label): -0.0647
+  Strategy: pred > median(-0.0729) -> long CSI300, else cash
+
+  Metric                       Timing  CSI 300 B&H
+  ----------------------------------------------
+  Annual Return               +20.51%      +20.60%
+  Annual Vol                    12.6%        15.1%
+  Sharpe Ratio                   1.43         1.20
+  Max Drawdown                  -9.5%       -10.9%
+  Win Rate                        28%          57%
+  Total Return                 +16.4%       +16.5%
+
+  Yearly Returns:
+    2024: Timing=  +3.2%  B&H=  +0.7%
+    2025: Timing= +12.8%  B&H= +15.6%
+    TOTAL: Timing= +16.4%  B&H= +16.5%
+=================================================================
