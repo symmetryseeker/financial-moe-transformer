@@ -73,7 +73,6 @@ class FinancialMoETransformer(nn.Module):
                 mask=None, source_ids=None, time_bins=None):
         B, L = company_ids.shape
         device = company_ids.device
-        # Fallback for backward-compat: if not provided, default to all-zeros
         source_ids = _ensure(source_ids, B, L, device)
         time_bins = _ensure(time_bins, B, L, device)
         mask = _ensure(mask, B, L, device, dtype=torch.bool, fill=True)

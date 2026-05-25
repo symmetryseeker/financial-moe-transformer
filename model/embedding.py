@@ -14,9 +14,9 @@ import math
 
 
 class ValueProjection(nn.Module):
-    def __init__(self, d_model=128):
+    def __init__(self, d_model=128, input_dim=1):
         super().__init__()
-        self.proj = nn.Linear(1, d_model)
+        self.proj = nn.Linear(input_dim, d_model)
 
     def forward(self, x):
         return self.proj(x)
