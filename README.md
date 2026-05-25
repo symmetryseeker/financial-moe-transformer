@@ -1,57 +1,63 @@
-# Financial MoE Transformer
+# Financial MoE Transformer · 金融MoE Transformer
 
-CSI 300 excess return prediction using a Transformer + Mixture of Experts (MoE) hybrid model.
+CSI 300 index prediction via Transformer + Mixture of Experts.  
+基于 Transformer + 混合专家模型的沪深300指数预测。
 
-## Architecture (Phase 2 — proven)
+[![GPU](https://img.shields.io/badge/GPU-GTX%201060%206GB-green)]()
+[![PyTorch](https://img.shields.io/badge/PyTorch-2.5.1%2Bcu121-orange)]()
+[![IC](https://img.shields.io/badge/Val%20IC-0.100-blue)]()
 
-- **Dual Embedding**: company (32d) + metric (96d) → solves vocab explosion
-- **Hierarchical Encoder**: source-pooled × 4-scale temporal pyramid
-- **Chunked cosFormer Attention**: O(L·d²) with chunk_size=2048
-- **Sparse MoE**: 6 experts (128→64→32→1), Top-1 routing
-- **EMA inference**: decay=0.999 for stable predictions
+---
 
-## Current State
+## Architecture · 架构
 
-| Metric | Value |
-|--------|-------|
-| Val IC | +0.053 (rising) |
-| From-scratch IC | +0.039 |
-| Expert CV | 1.36 |
-| Params | 938K (data/processed/ dataset) |
+| Component 组件 | Description 描述 |
+|---|---|
+| Dual Embedding 双嵌入 | company(32d) + metric(96d) → 128d token |
+| Hierarchical Encoder 层次编码器 | 5 sources × 4 time scales, cross-source fusion |
+| cosFormer Attention 线性注意力 | chunk=2048, O(L·d²), supports 8192 tokens |
+| Sparse MoE 稀疏专家 | 6 experts, Top-1 routing, 938K params |
 
-## Key Files
+## Key Results · 核心结果
 
-```
-config.py          — All hyperparameters
-model/             — Architecture (embedding, transformer, moe, predictor, hierarchical)
-utils/             — Dataset, losses, text encoder, LLM state generator
-data/              — Data pipeline (fetch, prepare, rebuild labels)
-train.py           — Training script (Phase 2 reverted — no noise/z-loss)
-reinit_experts.py  — Differentiated expert re-initialization
-```
+| Metric 指标 | Value 数值 |
+|---|---|
+| Best Val IC 最佳验证IC | **+0.100** |
+| Market Timing Sharpe 择时夏普 | **+0.97** (2020) / **+0.99** (2021) |
+| GPU Speed 速度 | 5-7 min/epoch (10× vs CPU) |
+| Training Data 训练数据 | 1M+ stock labels, 15-22M data points |
 
-## Training
+## Quick Start · 快速开始
 
 ```bash
-# From scratch on data/processed/ dataset
-python train.py --epochs 20 --batch-size 2
+# Train 训练
+python train.py --epochs 20 --batch-size 4
 
-# Continue from checkpoint
-python train.py --epochs 15 --batch-size 2 --resume checkpoints/best.pt
+# Market timing backtest 择时回测
+python backtest_phase1_final.py
+
+# Multi-period evaluation 多周期评估
+python multi_period_eval.py
 ```
 
-## Data
+## Project Structure · 项目结构
 
-Two datasets exist:
-- `data/processed/` — 316c × 333m, 15.4M rows, proven IC=+0.053
-- `D:/financial_data/processed/` — 6267c × 127m, 22.2M rows, IC ceiling ~+0.027
+```
+model/         — Transformer, MoE, Embedding, Hierarchical Encoder
+utils/         — Dataset, Losses, Text Encoder
+data/          — Data pipeline, Label generation, Macro injection
+reports/       — Backtest reports, Charts, Word report
+checkpoints/   — Trained model weights (.pt files)
+```
 
-**Vocab stability**: `_build_dual_vocab()` persists `company_vocab.json` and `metric_vocab.json` to `data/processed/cache/` to ensure checkpoint compatibility across pipeline runs.
+## Key Lessons · 关键经验
 
-## Key Lessons
+1. **Data > Architecture** 数据优于架构 — 90%+ IC improvement from data quality fixes
+2. **MoE tuning is marginal** MoE调参收益有限 — noise/z-loss/LB have near-zero impact
+3. **CS prediction needs asymmetric inputs** 截面预测需非对称输入 — stock-specific features required
+4. **Vocab persistence is critical** 词表持久化至关重要 — save `company_vocab.json` across runs
+5. **Prefixed model > WF-CV retraining** 预训练模型优于逐折重训 — use full history, deploy forward
 
-1. **LB > 0.05 harms training** — load balance coefficient must stay low (0.01-0.03)
-2. **Noise gating / z-loss have zero impact on IC** — removed in Phase 2 revert
-3. **Differentiated expert init only helps when experts are collapsed** — don't reinit well-trained experts
-4. **Low LR + patience pays off** — IC broke from 0.039→0.053 after epoch 9 with LR=1e-4
-5. **Data pipeline stability is critical** — vocab must be persisted to reuse checkpoints
+## License
+
+MIT
